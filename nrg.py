@@ -8,6 +8,7 @@ Copyright (c) 2014 digIT 14/15
 
 import os
 import sys
+import datetime
 from optparse import OptionParser
 import requests
 from requests.auth import HTTPBasicAuth
@@ -17,6 +18,30 @@ nagios_status = {2:'OK',
                  16:'Critical',
                  8:'Unknown',
                  1:'Pending'}
+status_bgcolor = {2:"#2BE043",
+                  4:"#F2ED4E",
+                  16:"#E34040",
+                  8:"#000",
+                  1:"#000"}
+
+mail_header = """From: Nagios Weekly Reporter <nagios@chalmers.it>\r
+To: digit@chalmers.it
+Reply-To: no-reply@chalmers.it
+MIME-Version: 1.0
+Subject: Weekly status report
+Content-Type: text/html; charset=utf-8
+"""
+
+html_header = """<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Weekly Nagios status report</title>
+</head>
+<body>
+"""
+
+html_footer = """</body>
+</html>"""
 
 def main(argv):
     parser = OptionParser(description='Generate a HTML report about current Nagios status.')
@@ -47,20 +72,41 @@ def main(argv):
         sys.exit(1)
 
     if json_req.status_code != requests.codes.ok:
-        print("Non-OK HTTP status code:", json_req.status_code)
+        print("Non-OK HTTP status code:", json_req.status_code, file=sys.stderr)
         sys.exit(1)
 
+    print(mail_header)
     output_html(json_req.json())
 
 def output_html(json):
-    for host, service in json['data']['servicelist'].items():
-        print(host, " - ")
-        print_services(service)
+    if not 'servicelist' in json['data']:
+        print("Unable to find any services in json. Unknown/invalid --service-status?", file=sys.stderr)
+        sys.exit(1)
 
-def print_services(services):
+    print(html_header)
+    print("<table border=1>")
+    print("<tr>\n\t<th>Host</th><th style='width:100px'>Service</th><th>Status</th><th>Last check</th><th>Status information</th>\n</tr>")
+    for host, service in json['data']['servicelist'].items():
+        print_service_data(host, service)
+    print("</table>")
+    print(html_footer)
+
+def print_service_data(host, services):
+    i = 0
     for key, value in services.items():
-        print("\t", key, "- Status:", nagios_status[value['status']])
-        print("\t\t", value['plugin_output'])
+        bgcolor = status_bgcolor[value['status']]
+        if i <= 0:
+            print("\t<tr><td>", host, "</td>", sep="")
+        else:
+            print("\t<tr><td></td>")
+        print("\t\t<td>", key, "</td>", sep="")
+        print("\t\t<td style='background-color:", bgcolor, "'>", nagios_status[value['status']], "</td>", sep="")
+        last_check = value['last_check']
+        #last_check = datetime.datetime.fromtimestamp(float(value['last_check'])).strftime('%Y-%m-%d %H:%M:%S')
+        print("\t\t<td>", last_check, "</td>", sep="")
+        print("\t\t<td><pre>", value['plugin_output'], "</pre></td>", sep="")
+        print("\t</tr>")
+        i = i+1
 
 if __name__ == '__main__':
     main(sys.argv)
