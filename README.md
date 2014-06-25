@@ -1,4 +1,11 @@
-scripts
-=======
+#digIT scripts
 
-scripts and utils
+Scripts and utils
+
+## List of scripts
+Script          | Description
+:------------   | :-------------
+_message.sh_    | Script to mute sound playing devices and play message
+_nrg.py_        | Generate a HTML mail to stdout with the current status of Nagios services
+
+
