@@ -25,7 +25,7 @@ status_bgcolor = {2:"#2BE043",
                   1:"#000"}
 
 mail_header = """From: Nagios Weekly Reporter <nagios@chalmers.it>\r
-To: digit@chalmers.it
+To: <RECIPIENT>
 Reply-To: no-reply@chalmers.it
 MIME-Version: 1.0
 Subject: Weekly status report
@@ -44,17 +44,7 @@ html_footer = """</body>
 </html>"""
 
 def main(argv):
-    parser = OptionParser(description='Generate a HTML report about current Nagios status.')
-    parser.add_option('-a', '--address', dest='address', metavar='URL',
-                      default='https://tatooine.chalmers.it:7777/nagios',
-                      help='The base address of the Nagios web gui [default: %default]')
-    parser.add_option('-u', '--username', dest='username', metavar='USER',
-                      default='digit', help='The username used to login to nagios')
-    parser.add_option('-p', '--password', dest='password', metavar='PASS',
-                      default='', help='The password used to login to nagios')
-    parser.add_option('-s', '--service-status', dest='service_status', metavar='STATUS',
-                      default='ok+warning+critical+unknown+pending', help='The service statuses we are interested in [default: %default]')
-    options, args = parser.parse_args(args=argv[1:])
+    options = define_arguments(argv)
 
     if not options.username or not options.password:
         parser.error('Username or password not set')
@@ -75,7 +65,8 @@ def main(argv):
         print("Non-OK HTTP status code:", json_req.status_code, file=sys.stderr)
         sys.exit(1)
 
-    print(mail_header)
+    if options.print_mail_header:
+        print(mail_header.replace("<RECIPIENT>", options.recipient))
     output_html(json_req.json())
 
 def output_html(json):
@@ -106,7 +97,26 @@ def print_service_data(host, services):
         print("\t\t<td>", last_check, "</td>", sep="")
         print("\t\t<td><pre>", value['plugin_output'], "</pre></td>", sep="")
         print("\t</tr>")
-        i = i+1
+        i = i + 1
+
+def define_arguments(argv):
+    parser = OptionParser(description=
+                          'Generate a HTML report about current Nagios status')
+    parser.add_option('-a', '--address', dest='address', metavar='URL',
+                      default='https://localhost:/nagios',
+                      help='The base address of the Nagios web gui [default: %default]')
+    parser.add_option('-u', '--username', dest='username', metavar='USER',
+                      default='digit', help='The username used to login to nagios')
+    parser.add_option('-p', '--password', dest='password', metavar='PASS',
+                      default='', help='The password used to login to nagios')
+    parser.add_option('-s', '--service-status', dest='service_status', metavar='STATUS',
+                      default='ok+warning+critical+unknown+pending', help='The service statuses we are interested in [default: %default]')
+    parser.add_option('-r', '--recipient', dest='recipient', metavar='RECIPIENT',
+                      default='digit@chalmers.it', help='The mail address of the recipient of the report [default: %default]')
+    parser.add_option('-d', '--disable-mail-header', dest='print_mail_header', metavar='PRINT', action="store_false",
+                      default=True, help='Disable printing of the mail headers')
+    options, _ = parser.parse_args(args=argv[1:])
+    return options
 
 if __name__ == '__main__':
     main(sys.argv)
