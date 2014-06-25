@@ -6,12 +6,11 @@ TODO: Write desc
 Copyright (c) 2014 digIT 14/15
 '''
 
-import os
+import time
 import sys
 import datetime
 from optparse import OptionParser
 import requests
-from requests.auth import HTTPBasicAuth
 
 nagios_status = {2:'OK',
                  4:'Warning',
@@ -75,6 +74,8 @@ def output_html(json):
         sys.exit(1)
 
     print(html_header)
+    print("<h2>Nagios status report ", time.strftime("week %W"), "</h2>", sep="")
+    print("<h3>Generated on ", time.strftime("%d %b %Y %H:%M:%S"), "</h3>", sep="")
     print("<table border=1>")
     print("<tr>\n\t<th>Host</th><th style='width:100px'>Service</th><th>Status</th><th>Last check</th><th>Status information</th>\n</tr>")
     for host, service in json['data']['servicelist'].items():
