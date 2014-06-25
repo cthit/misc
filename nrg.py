@@ -93,8 +93,7 @@ def print_service_data(host, services):
             print("\t<tr><td></td>")
         print("\t\t<td>", key, "</td>", sep="")
         print("\t\t<td style='background-color:", bgcolor, "'>", nagios_status[value['status']], "</td>", sep="")
-        last_check = value['last_check']
-        #last_check = datetime.datetime.fromtimestamp(float(value['last_check'])).strftime('%Y-%m-%d %H:%M:%S')
+        last_check = datetime.datetime.fromtimestamp(float(value['last_check']/1000)).strftime('%Y-%m-%d %H:%M:%S')
         print("\t\t<td>", last_check, "</td>", sep="")
         print("\t\t<td><pre>", value['plugin_output'], "</pre></td>", sep="")
         print("\t</tr>")
