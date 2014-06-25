@@ -27,7 +27,7 @@ mail_header = """From: Nagios Weekly Reporter <nagios@chalmers.it>\r
 To: <RECIPIENT>
 Reply-To: no-reply@chalmers.it
 MIME-Version: 1.0
-Subject: Weekly status report
+Subject: <WEEK> status report
 Content-Type: text/html; charset=utf-8
 """
 
@@ -65,7 +65,9 @@ def main(argv):
         sys.exit(1)
 
     if options.print_mail_header:
-        print(mail_header.replace("<RECIPIENT>", options.recipient))
+        tmp = mail_header.replace("<RECIPIENT>", options.recipient)
+        tmp = tmp.replace("<WEEK>", time.strftime("Week %W"))
+        print(tmp)
     output_html(json_req.json())
 
 def output_html(json):
