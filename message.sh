@@ -33,7 +33,7 @@ done
 
 #Waiting one sec, playing message, waiting another sec
 sleep 1s
-mplayer -af volume=10 -user-agent Mozilla "http://translate.google.com/translate_tts?tl=en_us&q=$(echo $* | sed 's#\ #\+#g')" > /dev/null 2>&1 ;
+mplayer -af volume=2 -prefer-ipv4 -user-agent Mozilla "http://translate.google.com/translate_tts?tl=en_us&q=$(echo $* | sed 's#\ #\+#g')" > /dev/null 2>&1 ;
 sleep 1s
 
 #Unmuting previously muted
