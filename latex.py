@@ -8,6 +8,7 @@ import json
 import subprocess
 import os
 import sys
+import shutil
 
 urls = ('/.*', 'Hooks')
 app = web.application(urls, globals())
@@ -27,29 +28,25 @@ def get_files(commits, category):
     files = []
     for commit in commits:
         for file in commit[category]:
-            if file.endswith(".tex"):
-                files.append(file)
+            files.append(file)
 
     return files
 
-def compile_files(files):
+def run_makefiles(directories):
+    for directory in directories:
+        if os.path.exists(directory + "/Makefile"):
+            print "Running makefile in: " + directory
+            os.system("make -C " + directory)
+            
+def collect_compiled_files(directories):
     compiled_files = []
-    print files
-    for file in files:
-        subprocess.call("pdftex", "-interaction=nonstopmode", file)
-        name, ext = os.path.splitext(file)
-        compiled_files.append(name + ".pdf")
-
+    for directory in directories:
+        for file in os.listdir(directory):
+            if file.endswith(".pdf"):
+                print "File: " + file
+                compiled_files.append(directory + "/" + file)
+                
     return compiled_files
-
-def move_files(src, dest, files):
-    for file in files:
-        os.rename(src + file, dest + file)
-
-def delete_files(dir, files):
-    for file in files:
-        os.remove(dir + file)
-
 
 def pull_repo(path):
     repo = git.Repo(path)
@@ -61,27 +58,43 @@ def run(data):
 
     parsed_data = json.loads(data)
     repo_name = parsed_data["repository"]["name"]
-
-    print "Name: " + repo_name
-    modified_files = get_files(parsed_data["commits"], "modified")
-    #print "Modified files: " + modified_files[0]
-    added_files = get_files(parsed_data["commits"], "added")
-
-    removed_files = get_files(parsed_data["commits"], "removed")
-
     pull_repo(REPO_BASE_PATH + repo_name)
+    modified_files = get_files(parsed_data["commits"], "modified")
+    added_files = get_files(parsed_data["commits"], "added")
+    removed_files = get_files(parsed_data["commits"], "removed")
+    
+    changed_files = added_files + modified_files + removed_files
+    unique_directories = []
 
-   # compiled_files = compile_files(modified_files + added_files)
-   
-   # move_files(REPO_BASE_PATH + repo_name, COMPILED_FILES_DIR_PATH, compiled_files)
-
-
-
+    for file in changed_files:
+        directory = os.path.dirname(file)
+        found = False
+        for unique_directory in unique_directories:
+            if unique_directory == os.path.dirname(file):
+                found = True
+                break
+        if found:
+            found = False
+        else:
+            unique_directories.append(directory)
+    
+    #Append the repo path to all directory paths
+    unique_directories = [REPO_BASE_PATH + repo_name + "/" + directory for directory in unique_directories]
+    
+    run_makefiles(unique_directories)
+    
+    compiled_files = collect_compiled_files(unique_directories)
+       
+    for file in files:
+        if not os.path.exists(os.path.dirname(dest + file)):
+            os.makedirs(os.path.dirname(dest + file))
+            
+        shutil.move(file, dest + file)
 
 if __name__ == '__main__':
     print sys.argv
     if len(sys.argv) > 1:
         run(sys.argv[1])
     else:
-	app.run() #Used for testing.
+	    app.run() #Used for testing.
 
