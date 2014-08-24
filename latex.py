@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python2
 #
 # Script that pulls changes from a gitrepo and compiles
 # the latex files into PDF-files
@@ -10,9 +10,10 @@ import json
 import os
 import sys
 import shutil
+from optparse import OptionParser
 
-REPO_BASE_PATH = "/home/kerp/Desktop/"
-OUTPUT_DIRECTORY = "/www/core/wp-content/uploads/styrit/"
+REPO_BASE_PATH = ""
+OUTPUT_DIRECTORY = ""
 
 
 # Get all files from a series of commits in a category
@@ -125,9 +126,25 @@ def run(data):
 
 
 if __name__ == '__main__':
-    os.chdir(REPO_BASE_PATH)
-    if len(sys.argv) > 1:
-        if sys.argv[1] == "--first-run":
-            handleFirstRun(sys.argv[2])
+    parser = OptionParser(description="Compile LaTeX files to PDF-files")
+    parser.add_option('-f', '--first-run', dest="firstrun", metavar="REPO_FOLDER",
+                      help='use when this script is run for the first time. Argument: repo folder')
+    parser.add_option('-r', '--repo-path', dest="repo_base_path",
+                      default="/home/kerp/Desktop",
+                      help='the path to the GIT-repo to read from')
+    parser.add_option('-o', '--output', dest="output",
+                      default="/www/core/wp-content/uploads/styrit/",
+                      help='where to put the compiled files')
+    options, args = parser.parse_args(sys.argv[1:])
+
+    REPO_BASE_PATH = options.repo_base_path
+    OUTPUT_DIRECTORY = options.output
+
+    #os.chdir(REPO_BASE_PATH)
+    if options.firstrun:
+        handleFirstRun(options.firstrun)
+    else:
+        if len(args) != 1:
+            print "Invalid amount of arguments supplied. Expected 1 JSON argument"
         else:
-            run(sys.argv[1])
+            run(args[0])
