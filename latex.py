@@ -140,7 +140,7 @@ if __name__ == '__main__':
     REPO_BASE_PATH = options.repo_base_path
     OUTPUT_DIRECTORY = options.output
 
-    #os.chdir(REPO_BASE_PATH)
+    os.chdir(REPO_BASE_PATH)
     if options.firstrun:
         handleFirstRun(options.firstrun)
     else:
