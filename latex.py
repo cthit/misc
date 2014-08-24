@@ -1,29 +1,18 @@
 #!/usr/bin/env python
 
-import web #http://webpy.org
 import git #https://pypi.python.org/pypi/GitPython/
 
-import logging
 import json
 import subprocess
 import os
 import sys
 import shutil
 
-urls = ('/.*', 'Hooks')
-app = web.application(urls, globals())
+REPO_BASE_PATH = "/home/kerp/Desktop/"
+OUTPUT_DIRECTORY = "/www/core/wp-content/uploads/styrit/"
 
-REPO_BASE_PATH = ""
-COMPILED_FILES_DIR_PATH = "/var/www/core/wp-content/uploads/styrit/"
-
-class Hooks:
-
-    def POST(self):
-        data = web.data()
-        run(data)
-        return "OK"
-
-
+# Get all files from a series of commits in a category
+# Categories are 'Added', 'Modified' and 'removed'
 def get_files(commits, category):
     files = []
     for commit in commits:
@@ -31,43 +20,48 @@ def get_files(commits, category):
             files.append(file)
 
     return files
-
+    
+# Run the makefile in a list of directories.
 def run_makefiles(directories):
     for directory in directories:
         if os.path.exists(directory + "/Makefile"):
             print "Running makefile in: " + directory
             os.system("make -C " + directory)
             
+# Go through a list of directories and collect all pdf files in them.        
 def collect_compiled_files(directories):
     compiled_files = []
     for directory in directories:
         for file in os.listdir(directory):
             if file.endswith(".pdf"):
                 print "File: " + file
-                compiled_files.append(directory + "/" + file)
+                compiled_files.append(os.path.relpath(os.path.join(directory, file)))
                 
     return compiled_files
-
+        
 def pull_repo(path):
     repo = git.Repo(path)
     origin = repo.remotes.origin
     origin.pull()
-
-
-def run(data):
+  
+# Returns a list with all directories that has a changed file in it.       
+def get_changed_directories(data):
 
     parsed_data = json.loads(data)
     repo_name = parsed_data["repository"]["name"]
     pull_repo(REPO_BASE_PATH + repo_name)
-    modified_files = get_files(parsed_data["commits"], "modified")
-    added_files = get_files(parsed_data["commits"], "added")
-    removed_files = get_files(parsed_data["commits"], "removed")
+    
+    commits = parsed_data["commits"]
+    
+    modified_files = get_files(commits, "modified")
+    added_files = get_files(commits, "added")
+    removed_files = get_files(commits, "removed")
     
     changed_files = added_files + modified_files + removed_files
     unique_directories = []
 
     for file in changed_files:
-        directory = os.path.dirname(file)
+        files = os.path.dirname(file)
         found = False
         for unique_directory in unique_directories:
             if unique_directory == os.path.dirname(file):
@@ -76,25 +70,51 @@ def run(data):
         if found:
             found = False
         else:
-            unique_directories.append(directory)
+            unique_directories.append(os.path.dirname(file))
     
     #Append the repo path to all directory paths
-    unique_directories = [REPO_BASE_PATH + repo_name + "/" + directory for directory in unique_directories]
+    unique_directories = [os.path.join(REPO_BASE_PATH, repo_name, directory) for directory in unique_directories]
     
-    run_makefiles(unique_directories)
+    return unique_directories
     
-    compiled_files = collect_compiled_files(unique_directories)
-       
-    for file in files:
-        if not os.path.exists(os.path.dirname(dest + file)):
-            os.makedirs(os.path.dirname(dest + file))
+# Go through all directories, run its makefile collect the compiled pdf files and copy them to their destination.    
+def execute(directories):
+    run_makefiles(directories)
+    
+    compiled_files = collect_compiled_files(directories)   
+    
+    for file in compiled_files:
+        file_destination = os.path.join(OUTPUT_DIRECTORY, file)
+        if not os.path.exists(os.path.dirname(file_destination)):
+            os.makedirs(os.path.dirname(file_destination))
             
-        shutil.move(file, dest + file)
+        shutil.copy(file, file_destination)
+
+# Run only when --first-run is an argument and it runs all makefiles in every directory no matter if any file has changed or not.
+def handleFirstRun(repo_folder):
+    os.chdir(REPO_BASE_PATH)
+    pull_repo(os.path.join(REPO_BASE_PATH, repo_folder))
+    
+    directories = []
+    for root, sub_folders, files in os.walk(repo_folder):
+        for folder in sub_folders:
+            folder = os.path.join(os.path.relpath(root), folder) 
+            directories.append(folder)
+            
+    
+    execute(directories)
+
+# Executes the normal flow of the script.
+def run(data):
+    directories = get_changed_directories(data)
+    execute(directories)
+        
 
 if __name__ == '__main__':
-    print sys.argv
+    os.chdir(REPO_BASE_PATH)
     if len(sys.argv) > 1:
-        run(sys.argv[1])
-    else:
-	    app.run() #Used for testing.
+        if sys.argv[1] == "--first-run":
+            handleFirstRun(sys.argv[2])
+        else:
+            run(sys.argv[1])
 
