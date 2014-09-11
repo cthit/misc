@@ -4,8 +4,6 @@
 # the latex files into PDF-files
 #
 
-import git  # https://pypi.python.org/pypi/GitPython/
-
 import json
 import os
 import sys
@@ -49,9 +47,7 @@ def collect_compiled_files(directories):
 
 
 def pull_repo(path):
-    repo = git.Repo(path)
-    origin = repo.remotes.origin
-    origin.pull()
+    os.system("git -C " + path + " pull")
 
 
 # Returns a list with all directories that has a changed file in it.
