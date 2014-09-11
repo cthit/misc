@@ -130,10 +130,10 @@ if __name__ == '__main__':
     parser.add_option('-f', '--first-run', dest="firstrun", metavar="REPO_FOLDER",
                       help='use when this script is run for the first time. Argument: repo folder')
     parser.add_option('-r', '--repo-path', dest="repo_base_path",
-                      default="/home/kerp/Desktop",
+                      default="/home/kerp/Desktop/",
                       help='the path to the GIT-repo to read from')
     parser.add_option('-o', '--output', dest="output",
-                      default="/www/core/wp-content/uploads/styrit/",
+                      default="/var/www/core/wp-content/uploads/styrit/",
                       help='where to put the compiled files')
     options, args = parser.parse_args(sys.argv[1:])
 
