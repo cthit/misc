@@ -7,7 +7,6 @@
 import json
 import os
 import sys
-import shutil
 from optparse import OptionParser
 
 REPO_BASE_PATH = ""
@@ -92,10 +91,11 @@ def execute(directories):
     compiled_files = collect_compiled_files(directories)
 
     for file in compiled_files:
-        file_destination = os.path.abspath(OUTPUT_DIRECTORY)
+        file_destination = os.path.abspath(os.path.join(OUTPUT_DIRECTORY, 
+                                           os.path.basename(file)))
         if not os.path.exists(file_destination):
             os.makedirs(file_destination)
-        shutil.move(file, file_destination)
+        os.rename(file, file_destination)
 
 
 # Run only when --first-run is an argument and it runs all makefiles in
