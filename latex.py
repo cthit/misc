@@ -116,7 +116,10 @@ def handleFirstRun(repo_folder):
 
 
 # Executes the normal flow of the script.
-def run(data):
+def run(json_file):
+    f = open(json_file)
+    data = f.readlines()
+    f.close()
     directories = get_changed_directories(data)
     execute(directories)
 
@@ -131,6 +134,8 @@ if __name__ == '__main__':
     parser.add_option('-o', '--output', dest="output",
                       default="/var/www/core/wp-content/uploads/styrit/",
                       help='where to put the compiled files')
+    parser.add_option("-j", '--json', dest="json_file", default=None,
+                      help="The file to read json from")
     options, args = parser.parse_args(sys.argv[1:])
 
     REPO_BASE_PATH = options.repo_base_path
@@ -140,7 +145,7 @@ if __name__ == '__main__':
     if options.firstrun:
         handleFirstRun(options.firstrun)
     else:
-        if len(args) != 1:
-            print "Invalid amount of arguments supplied. Expected 1 JSON argument"
+        if options.json_file is None:
+            print "You haven't supplied any file to read json from..."
         else:
-            run(args[0])
+            run(options.json_file)
