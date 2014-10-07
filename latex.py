@@ -40,7 +40,7 @@ def collect_compiled_files(directories):
         for file in os.listdir(directory):
             if file.endswith(".pdf"):
                 print "File: " + file
-                path = os.path.relpath(os.path.join(directory, file))
+                path = os.path.abspath(os.path.join(directory, file))
                 compiled_files.append(path)
 
     return compiled_files
@@ -54,8 +54,7 @@ def pull_repo(path):
 def get_changed_directories(data):
 
     parsed_data = json.loads(data)
-    repo_name = parsed_data["repository"]["name"]
-    pull_repo(REPO_BASE_PATH + repo_name)
+    pull_repo(REPO_BASE_PATH)
 
     commits = parsed_data["commits"]
 
@@ -79,7 +78,7 @@ def get_changed_directories(data):
             unique_directories.append(os.path.dirname(file))
 
     #Append the repo path to all directory paths
-    unique_directories = [os.path.join(REPO_BASE_PATH, repo_name, directory)
+    unique_directories = [os.path.join(REPO_BASE_PATH, directory)
                           for directory in unique_directories]
 
     return unique_directories
@@ -93,11 +92,10 @@ def execute(directories):
     compiled_files = collect_compiled_files(directories)
 
     for file in compiled_files:
-        file_destination = os.path.join(OUTPUT_DIRECTORY, file)
-        if not os.path.exists(os.path.dirname(file_destination)):
-            os.makedirs(os.path.dirname(file_destination))
-
-        shutil.copy(file, file_destination)
+        file_destination = os.path.abspath(OUTPUT_DIRECTORY)
+        if not os.path.exists(file_destination):
+            os.makedirs(file_destination)
+        shutil.move(file, file_destination)
 
 
 # Run only when --first-run is an argument and it runs all makefiles in
@@ -109,7 +107,7 @@ def handleFirstRun(repo_folder):
     directories = []
     for root, sub_folders, files in os.walk(repo_folder):
         for folder in sub_folders:
-            folder = os.path.join(os.path.relpath(root), folder)
+            folder = os.path.join(os.path.abspath(root), folder)
             directories.append(folder)
 
     execute(directories)
@@ -117,9 +115,8 @@ def handleFirstRun(repo_folder):
 
 # Executes the normal flow of the script.
 def run(json_file):
-    f = open(json_file)
-    data = f.readlines()
-    f.close()
+    with open(json_file, "r") as f:
+        data = f.read()
     directories = get_changed_directories(data)
     execute(directories)
 
