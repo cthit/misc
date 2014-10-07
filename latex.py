@@ -135,8 +135,8 @@ if __name__ == '__main__':
                       help="The file to read json from")
     options, args = parser.parse_args(sys.argv[1:])
 
-    REPO_BASE_PATH = options.repo_base_path
-    OUTPUT_DIRECTORY = options.output
+    REPO_BASE_PATH = os.path.abspath(options.repo_base_path)
+    OUTPUT_DIRECTORY = os.path.abspath(options.output)
 
     os.chdir(REPO_BASE_PATH)
     if options.firstrun:
