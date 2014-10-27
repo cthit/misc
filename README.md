@@ -15,4 +15,6 @@ _tentor.js_     | phantomjs script for downloading information about courses at 
 
 Item           | Description
 :------------   | :-------------
-_LDAP/chalmersstudent.schema_  |  The schema used for describing chalmers students in our LDAP directory
+_LDAP/chalmersstudent.schema_  |  The schema used for describing Chalmers students in our LDAP directory
+_LDAP/itAccount.xml_  | phpLdapAdmin creation template for a Chalmers student account
+_LDAP/itGroup.xml_  | phpLdapAdmin creation template for a group
