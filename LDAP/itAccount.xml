@@ -127,8 +127,8 @@
 	<order>15</order>
 	<page>1</page>
 	 <type>select</type>
-        <value id="sv_SE">Swedish</value>
-        <value id="en_GB">English</value>
+        <value id="sv">Swedish</value>
+        <value id="en">English</value>
 </attribute>
 </attributes>
 
