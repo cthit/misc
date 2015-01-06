@@ -37,6 +37,20 @@ attributetype ( 5.5.5.5.5.5.1337.1.1.5 NAME 'publicKey'
    EQUALITY octetStringMatch
    SYNTAX 1.3.6.1.4.1.1466.115.121.1.40 )
 
+attributetype ( 5.5.5.5.5.5.1337.1.1.6
+   NAME 'pushService'
+   DESC 'Store a push notification service in the format of: "service-name;device;api-key"'
+   EQUALITY caseIgnoreMatch
+   SUBSTR caseIgnoreSubstringsMatch
+   SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )
+
+attributetype ( 5.5.5.5.5.5.1337.1.1.7
+   NAME 'notifyBy'
+   DESC 'Notify user with this service. Eg. pushover, email or pushbullet'
+   EQUALITY caseIgnoreMatch
+   SUBSTR caseIgnoreSubstringsMatch
+   SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )
+
 objectclass ( 5.5.5.5.5.5.1337.1.2.1
    NAME 'chalmersstudent'
    SUP top STRUCTURAL
@@ -46,6 +60,6 @@ objectclass ( 5.5.5.5.5.5.1337.1.2.1
         givenName $ sn
     )
    MAY  (
-        nollanPhoto $ telephoneNumber $ description $ publicKey $ 
-        preferredLanguage
+        nollanPhoto $ telephoneNumber $ description $ publicKey $
+        preferredLanguage $ pushService $ notifyBy
         ) )
