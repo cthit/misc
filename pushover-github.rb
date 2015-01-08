@@ -18,6 +18,15 @@ MAX_TITLE = 250
 MAX_BODY = 1024
 ELLIPSIS = '…'
 
+def allowed_type?(type)
+  # TODO: issue_comment, member, pull_request, repository and team_add
+  valid_types = ['push', 'issues'].freeze
+  unless valid_types.include? type
+    puts type + ' is not a supported type. Supports ' + valid_types.to_s
+    exit
+  end
+end
+
 def truncate s, length = MAX_URL_TITLE, ellipsis = ELLIPSIS
   if s.length > length
     s.to_s[0..length-ellipsis.bytesize].gsub(/[^\w]\w+\s*$/, ellipsis)
@@ -26,7 +35,8 @@ def truncate s, length = MAX_URL_TITLE, ellipsis = ELLIPSIS
   end
 end
 
-def parse_issue(payload)
+
+def parse_issues(payload)
   issue = payload['issue']
   action = payload['action']
   ignore = ['unassigned', 'labeled', 'unlabeled']
@@ -85,6 +95,7 @@ end
 
 payload = JSON.parse(ARGV[0])
 type = ARGV[1]
+allowed_type? type
 
 data = send "parse_#{type}", payload
 if data[:url].size > MAX_URL
