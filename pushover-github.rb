@@ -16,8 +16,9 @@ MAX_URL = 512
 MAX_URL_TITLE = 100
 MAX_TITLE = 250
 MAX_BODY = 1024
+ELLIPSIS = '…'
 
-def truncate s, length = MAX_URL_TITLE, ellipsis = '…'
+def truncate s, length = MAX_URL_TITLE, ellipsis = ELLIPSIS
   if s.length > length
     s.to_s[0..length-ellipsis.bytesize].gsub(/[^\w]\w+\s*$/, ellipsis)
   else
@@ -36,14 +37,21 @@ def parse_issue(payload)
 end
 
 def parse_push(p)
-  commit_count = p['commits'].size
-  commit_str = "#{commit_count} commits " if commit_count > 1
-  title = "#{p['pusher']['name']} pushed #{commit_str}to #{p['repository']['full_name']}"
-  first_commit = p['commits'].first
-  message = "#{"Latest (" + first_commit['id'][0..7] + "):\n" if commit_count > 1}#{first_commit['message']}"
+  pushee = p['pusher']['name']
+  branch = p['ref'].split('/').last
+  repo = p['repository']['full_name']
+
+  message = p['commits'].map do |c|
+    parts = c['message'].partition "\n\n"
+    msg = parts.first
+    msg += " #{ELLIPSIS}" unless parts.last.empty?
+
+    "#{c['id'][0..6]} #{msg}"
+  end
 
   url = p['compare']
   url_title = "Compare on GitHub"
+  title = "#{pushee} pushed to #{branch} at #{repo}"
   {url: url, title: title, message: message, url_title: url_title}
 end
 
