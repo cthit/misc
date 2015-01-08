@@ -10,6 +10,7 @@ _nrg.py_        | Generate a HTML mail to stdout with the current status of Nagi
 _irkk_          | The irc-launcher used in the screen/tmux server (cantina).
 _tentor.js_     | phantomjs script for downloading information about courses at Chalmers
 _LDAP/dump_ldap.sh_  | Create a tar.gz file of ldap data and config.
+_pushover-github.rb_   | Script for parsing and pushing GitHub events to Pushover
 
 
 ## Miscellany
