@@ -5,8 +5,13 @@ require "net/https"
 require 'rubygems'
 require 'json'
 
-TOKEN = "put-your-token-here"
-USER  = "put-your-group/user-here"
+unless ARGV[2] && ARGV[3]
+  puts 'You need to supply TOKEN (api-key) as third argument and user key as fourth argument'
+  exit
+end
+
+TOKEN = ARGV[2]
+USER  = ARGV[3]
 MAX_URL = 512
 MAX_URL_TITLE = 100
 MAX_TITLE = 250
