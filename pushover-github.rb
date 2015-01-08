@@ -28,9 +28,27 @@ end
 
 def parse_issue(payload)
   issue = payload['issue']
-  title = "#{issue['user']['login']} #{payload['action']} issue '#{issue['title']}'"
-  labels = " (#{issue['labels'].join ', '})" if issue['labels'].any?
-  message = "#{payload['repository']['full_name']} issue ##{issue['number']}#{labels}:\n#{issue['body']}"
+  action = payload['action']
+  ignore = ['unassigned', 'labeled', 'unlabeled']
+  if ignore.include? action
+    puts "Issue parsing: ignoring action '#{action}'"
+    exit
+  end
+
+  repo = payload['repository']['full_name']
+  issue_num = issue['number']
+  issuee = issue['user']['login']
+  issue_title = issue['title']
+
+  case action
+  when "assigned"
+    assignee = payload['assignee']['login']
+    message = "#{assignee} were assigned to '#{issue_title}'"
+  else
+    message = issue_title
+  end
+
+  title = "#{issuee} #{action} issue #{repo}##{issue_num}"
   url = issue['html_url']
   url_title = 'View issue on GitHub'
   {url: url, title: title, message: message, url_title: url_title}
