@@ -8,7 +8,7 @@ require 'json'
 
 unless ARGV[2] && ARGV[3]
   puts 'You need to supply TOKEN (api-key) as third argument and user key as fourth argument'
-  exit
+  exit 1
 end
 
 TOKEN = ARGV[2]
@@ -24,7 +24,7 @@ def allowed_type?(type)
   valid_types = ['push', 'issues'].freeze
   unless valid_types.include? type
     puts type + ' is not a supported type. Supports ' + valid_types.to_s
-    exit
+    exit 1
   end
 end
 
@@ -43,7 +43,7 @@ def parse_issues(payload)
   ignore = ['unassigned', 'labeled', 'unlabeled']
   if ignore.include? action
     puts "Issue parsing: ignoring action '#{action}'"
-    exit
+    exit 1
   end
 
   repo = payload['repository']['full_name']
@@ -86,11 +86,11 @@ end
 
 unless ARGV[0]
   puts 'No GitHub-json supplied as first argument'
-  exit
+  exit 1
 end
 unless ARGV[1]
   puts 'No type supplied'
-  exit
+  exit 1
 end
 
 
@@ -101,7 +101,7 @@ allowed_type? type
 data = send "parse_#{type}", payload
 if data[:url].size > MAX_URL
   puts "URL too long. Maximum 512 chars. Size: #{url.size}"
-  exit
+  exit 1
 end
 
 push_url = URI.parse("https://api.pushover.net/1/messages.json")
