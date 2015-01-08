@@ -27,21 +27,22 @@
 </attribute>
 <attribute id="givenName">
 	<display>First name</display>
-	<onchange>=autoFill(cn;%givenName% %sn%)</onchange>
+    <!--<onchange>=autoFill(cn;%givenName% %sn%)</onchange>-->
 	<order>2</order>
 	<page>1</page>
 </attribute>
 <attribute id="sn">
 	<display>Last name</display>
-	<onchange>=autoFill(cn;%givenName% %sn%)</onchange>
+    <!--<onchange>=autoFill(cn;%givenName% %sn%)</onchange>-->
 	<order>3</order>
 	<page>1</page>
 </attribute>
 <attribute id="cn">
-	<display>Full Name</display>
-	<readonly>1</readonly>
+	<display>Display format</display>
+	<readonly>0</readonly>
 	<order>4</order>
 	<page>1</page>
+    <value>%{firstname} '%{nickname}' %{lastname}</value>
 </attribute>
 <attribute id="acceptedUserAgreement">
 	<display>Accepted User Agreement</display>
@@ -129,6 +130,18 @@
 	 <type>select</type>
         <value id="sv">Swedish</value>
         <value id="en">English</value>
+</attribute>
+<attribute id="notifyBy">
+	<display>Notify by</display>
+	<order>16</order>
+    <value>mail</value>
+	<page>1</page>
+</attribute>
+<attribute id="pushService">
+	<display>Push notification service</display>
+	<order>17</order>
+    <value></value>
+	<page>1</page>
 </attribute>
 </attributes>
 
