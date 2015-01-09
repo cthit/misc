@@ -100,7 +100,7 @@ def parse_push(p)
     msg += " #{ELLIPSIS}" unless parts.last.empty?
 
     "#{c['id'][0..6]} #{msg}"
-  end
+  end.join "\n"
 
   url = p['compare']
   url_title = "Compare on GitHub"
@@ -130,6 +130,7 @@ req.set_form_data({
    :url => data[:url],
    :url_title => (truncate data[:url_title], MAX_URL_TITLE)
 })
+# TODO: take time from GitHub. Allows resending of older messages
 
 res = Net::HTTP.new(push_url.host, push_url.port)
 res.use_ssl = true
