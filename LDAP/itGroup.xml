@@ -14,6 +14,7 @@
 <objectClasses>
 	<objectClass id="groupOfNames"></objectClass>
 	<objectClass id="posixGroup"></objectClass>
+	<objectClass id="itgroup"></objectClass>
 </objectClasses>
 
 <attributes>
@@ -25,6 +26,11 @@
 	<order>1</order>
 	<page>1</page>
 </attribute>
+<attribute id="displayName">
+	<display>Display name</display>
+	<order>2</order>
+	<page>1</page>
+</attribute>
 <attribute id="gidNumber">
 	<display>GID Number</display>
 	<hint>The next available number is automatically selected...</hint>
@@ -32,7 +38,7 @@
 </attribute>
 <attribute id="member">
 	<display>Members</display>
-	<value><![CDATA[=php.MultiList(/;(&(objectClass=posixAccount));dn;%cn% (%uid|-10%))]]></value>
+	<value><![CDATA[=php.MultiList(/;(&(objectClass=posixAccount));dn;%nickname% (%uid|-10%))]]></value>
 	<!--<max>25</max>-->
 </attribute>
 </attributes>

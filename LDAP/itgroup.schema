@@ -1,0 +1,9 @@
+# itgroup.schema - LDAP schema that supplies displayName to groups
+#
+# Written by Eda (digIT14) in January 2015
+#
+# OID: 5.5.5.5.5.5.1338.1.1
+#
+#
+objectclass ( 5.5.5.5.5.5.1338.1.2.1 NAME 'itGroup' SUP top AUXILIARY
+   MUST displayName )
