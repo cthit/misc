@@ -18,5 +18,6 @@ _pushover-github.rb_   | Script for parsing and pushing GitHub events to Pushove
 Item           | Description
 :------------   | :-------------
 _LDAP/chalmersstudent.schema_  |  The schema used for describing Chalmers students in our LDAP directory
+_LDAP/itgroup.schema_  |  The schema used for describing committees and groups in our LDAP directory
 _LDAP/itAccount.xml_  | phpLdapAdmin creation template for a Chalmers student account
 _LDAP/itGroup.xml_  | phpLdapAdmin creation template for a group

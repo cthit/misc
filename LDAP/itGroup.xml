@@ -31,6 +31,29 @@
 	<order>2</order>
 	<page>1</page>
 </attribute>
+<attribute id="mail">
+	<display>Mail</display>
+	<order>3</order>
+	<page>1</page>
+</attribute>
+<attribute id="homepage">
+	<display>Homepage</display>
+	<order>4</order>
+	<page>1</page>
+</attribute>
+<attribute id="type">
+	<display>Type</display>
+	<order>5</order>
+	<page>1</page>
+	 <type>select</type>
+        <value id="commitee">Committee</value>
+        <value id="society">Society</value>
+</attribute>
+<attribute id="function">
+	<display>Function (rustmästeri, studienämd osv)</display>
+	<order>6</order>
+	<page>1</page>
+</attribute>
 <attribute id="gidNumber">
 	<display>GID Number</display>
 	<hint>The next available number is automatically selected...</hint>
