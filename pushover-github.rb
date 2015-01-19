@@ -99,7 +99,7 @@ def parse_push(p)
     msg = parts.first
     msg += " #{ELLIPSIS}" unless parts.last.empty?
 
-    "#{c['id'][0..6]} #{msg}"
+    msg
   end.join "\n"
 
   url = p['compare']
@@ -135,4 +135,4 @@ req.set_form_data({
 res = Net::HTTP.new(push_url.host, push_url.port)
 res.use_ssl = true
 res.verify_mode = OpenSSL::SSL::VERIFY_PEER
-res.start {|http| puts http.request(req).body }
+#res.start {|http| puts http.request(req).body }
