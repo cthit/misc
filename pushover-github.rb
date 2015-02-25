@@ -72,7 +72,7 @@ def parse_issues(payload)
 
   repo = payload['repository']['full_name']
   issue_num = issue['number']
-  issuee = issue['user']['login']
+  issuee = payload['sender']['login']
   issue_title = issue['title']
 
   case action
