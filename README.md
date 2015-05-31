@@ -11,7 +11,7 @@ _irkk_          | The irc-launcher used in the screen/tmux server (cantina).
 _tentor.js_     | phantomjs script for downloading information about courses at Chalmers
 _LDAP/dump_ldap.sh_  | Create a tar.gz file of ldap data and config.
 _pushover-github.rb_   | Script for parsing and pushing GitHub events to Pushover
--quote.py_   | Script grabbing latest quote of the day from http://www.quotationspage.com/
+_quote.py_   | Script grabbing latest quote of the day from http://www.quotationspage.com/
 
 
 ## Miscellany
