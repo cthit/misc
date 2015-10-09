@@ -27,11 +27,6 @@ attributeType ( 5.5.5.5.5.5.1337.1.1.3
    SYNTAX 1.3.6.1.4.1.1466.115.121.1.7
    SINGLE-VALUE )
 
-attributetype ( 5.5.5.5.5.5.1337.1.1.4 NAME 'publicKey'
-   DESC 'OpenSSH Public key'
-   EQUALITY octetStringMatch
-   SYNTAX 1.3.6.1.4.1.1466.115.121.1.40 )
-
 attributetype ( 5.5.5.5.5.5.1337.1.1.5
    NAME 'pushService'
    DESC 'Store a push notification service in the format of: "service-name;device;api-key"'
@@ -60,6 +55,6 @@ objectclass ( 5.5.5.5.5.5.1337.1.2.1
         givenName $ sn
     )
    MAY  (
-        avatar $ nollanPhoto $ telephoneNumber $ description $ publicKey $
+        avatar $ nollanPhoto $ telephoneNumber $ description $
         preferredLanguage $ pushService
         ) )
