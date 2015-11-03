@@ -13,7 +13,7 @@ _tentor.js_     | phantomjs script for downloading information about courses at 
 _LDAP/dump_ldap.sh_  | Create a tar.gz file of ldap data and config.
 _pushover-github.rb_   | Script for parsing and pushing GitHub events to Pushover
 _quote.py_   | Script grabbing latest quote of the day from http://www.quotationspage.com/
-
+_generate-ldapdiff_ | Script for creating ldap diff files easier
 
 ## Miscellany
 
