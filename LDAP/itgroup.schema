@@ -32,6 +32,13 @@ attributetype ( 5.5.5.5.5.5.1338.1.1.4
    EQUALITY caseIgnoreIA5Match
    SYNTAX 1.3.6.1.4.1.1466.115.121.1.26 )
 
+attributetype ( 5.5.5.5.5.5.1338.1.1.5
+   NAME 'position'
+   DESC 'Store a position for members in the following format: "position;cid"'
+   EQUALITY caseIgnoreMatch
+   SUBSTR caseIgnoreSubstringsMatch
+   SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )
+
 objectclass ( 5.5.5.5.5.5.1338.1.2.1 NAME 'itGroup' SUP top AUXILIARY
    MUST ( displayName $ description )
-   MAY ( groupLogo $ mail $ homepage $ type $ function ) )
+   MAY ( groupLogo $ mail $ homepage $ type $ function $ position ) )
