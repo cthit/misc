@@ -115,7 +115,7 @@ def parse_pull_request(p)
 
   accepted = ['opened', 'closed']
   unless accepted.include? action
-    abort "Pull-request parsing: ignoring action '#{action}'"
+    abort "Pull request parsing: ignoring action '#{action}'"
   end
 
   if action == 'closed' and pr['merged']
@@ -123,11 +123,11 @@ def parse_pull_request(p)
     user = pr['merged_by']['login']
   end
 
-  title = "#{user} #{action} pull request #{p['number']}"
+  title = "#{p['repository']['name']}: #{user} #{action} a pull request"
   message = pr['title']
 
   url = pr['url']
-  url_title = "View pull-request on GitHub"
+  url_title = "View pull request on GitHub"
   {url: url, title: title, message: message, url_title: url_title}
 end
 
