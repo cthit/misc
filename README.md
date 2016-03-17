@@ -13,6 +13,8 @@ _LDAP/dump_ldap.sh_  | Create a tar.gz file of ldap data and config.
 _pushover-github.rb_   | Script for parsing and pushing GitHub events to Pushover
 _quote.py_   | Script grabbing latest quote of the day from http://www.quotationspage.com/
 _generate-ldapdiff_ | Script for creating ldap diff files easier
+_add-issue-labels.sh | Adds our standard issue labels 'low', 'medium' and 'high' to labels on GitHub
+_setup_github_irc_hook.sh | Setup IRC hook for repo to push notice messages to IRC. See file for config details 
 
 ## Miscellany
 
