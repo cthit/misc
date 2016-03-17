@@ -33,7 +33,7 @@ done
 
 #Waiting one sec, playing message, waiting another sec
 sleep 1s
-gtts-pipe -t $(echo $*) | mpv - > /dev/null 2>&1 ;
+gtts-cli.py $(echo $*) | mpv - > /dev/null 2>&1 ;
 sleep 1s
 
 #Unmuting previously muted

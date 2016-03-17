@@ -35,7 +35,7 @@ def valid_options? options
     failed = true
   else
     # TODO: issue_comment, member, pull_request, repository and team_add
-    valid_events = ['push', 'issues'].freeze
+    valid_events = ['push', 'issues', 'pull_request'].freeze
     unless valid_events.include? options[:event]
       puts options[:event] + ' is not a supported event. Supports ' + valid_events.to_s
       failed = true
@@ -70,7 +70,7 @@ def parse_issues(payload)
     abort "Issue parsing: ignoring action '#{action}'"
   end
 
-  repo = payload['repository']['full_name']
+  repo = payload['repository']['name']
   issue_num = issue['number']
   issuee = payload['sender']['login']
   issue_title = issue['title']
@@ -83,7 +83,7 @@ def parse_issues(payload)
     message = issue_title
   end
 
-  title = "#{issuee} #{action} issue #{repo}##{issue_num}"
+  title = "#{repo}: #{issuee} #{action} issue #{issue_num}"
   url = issue['html_url']
   url_title = 'View issue on GitHub'
   {url: url, title: title, message: message, url_title: url_title}
@@ -92,19 +92,40 @@ end
 def parse_push(p)
   pushee = p['pusher']['name']
   branch = p['ref'].split('/').last
-  repo = p['repository']['full_name']
+  repo = p['repository']['name']
 
-  message = p['commits'].map do |c|
-    parts = c['message'].partition "\n\n"
-    msg = parts.first
-    msg += " #{ELLIPSIS}" unless parts.last.empty?
-
-    msg
-  end.join "\n"
+  if p['commits'].length > 1
+    message = "Latest: "
+  end
+  parts = p['head_commit']['message'].partition "\n\n"
+  message += parts.first
 
   url = p['compare']
   url_title = "Compare on GitHub"
-  title = "#{pushee} pushed to #{branch} at #{repo}"
+  title = "#{repo}: #{pushee} pushed to #{branch}"
+  {url: url, title: title, message: message, url_title: url_title}
+end
+
+def parse_pull_request(p)
+  pr = p['pull_request']
+  user = p['sender']['login']
+  action = p['action']
+
+  accepted = ['opened', 'closed']
+  unless accepted.include? action
+    abort "Pull request parsing: ignoring action '#{action}'"
+  end
+
+  if action == 'closed' and pr['merged']
+    action = "merged"
+    user = pr['merged_by']['login']
+  end
+
+  title = "#{p['repository']['name']}: #{user} #{action} a pull request"
+  message = pr['title']
+
+  url = pr['url']
+  url_title = "View pull request on GitHub"
   {url: url, title: title, message: message, url_title: url_title}
 end
 
