@@ -94,13 +94,11 @@ def parse_push(p)
   branch = p['ref'].split('/').last
   repo = p['repository']['name']
 
-  message = p['commits'].map do |c|
-    parts = c['message'].partition "\n\n"
-    msg = parts.first
-    msg += " #{ELLIPSIS}" unless parts.last.empty?
-
-    msg
-  end.join "\n"
+  if p['commits'].length > 1
+    message = "Latest: "
+  end
+  parts = p['head_commit']['message'].partition "\n\n"
+  message += parts.first
 
   url = p['compare']
   url_title = "Compare on GitHub"
