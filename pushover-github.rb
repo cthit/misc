@@ -35,7 +35,7 @@ def valid_options? options
     failed = true
   else
     # TODO: issue_comment, member, pull_request, repository and team_add
-    valid_events = ['push', 'issues'].freeze
+    valid_events = ['push', 'issues', 'pull_request'].freeze
     unless valid_events.include? options[:event]
       puts options[:event] + ' is not a supported event. Supports ' + valid_events.to_s
       failed = true
@@ -105,6 +105,29 @@ def parse_push(p)
   url = p['compare']
   url_title = "Compare on GitHub"
   title = "#{pushee} pushed to #{branch} at #{repo}"
+  {url: url, title: title, message: message, url_title: url_title}
+end
+
+def parse_pull_request(p)
+  pr = p['pull_request']
+  user = p['sender']['login']
+  action = p['action']
+
+  accepted = ['opened', 'closed']
+  unless accepted.include? action
+    abort "Pull-request parsing: ignoring action '#{action}'"
+  end
+
+  if action == 'closed' and pr['merged']
+    action = "merged"
+    user = pr['merged_by']['login']
+  end
+
+  title = "#{user} #{action} pull request #{p['number']}"
+  message = pr['title']
+
+  url = pr['url']
+  url_title = "View pull-request on GitHub"
   {url: url, title: title, message: message, url_title: url_title}
 end
 
