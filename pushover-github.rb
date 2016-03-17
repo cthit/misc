@@ -70,7 +70,7 @@ def parse_issues(payload)
     abort "Issue parsing: ignoring action '#{action}'"
   end
 
-  repo = payload['repository']['full_name']
+  repo = payload['repository']['name']
   issue_num = issue['number']
   issuee = payload['sender']['login']
   issue_title = issue['title']
@@ -83,7 +83,7 @@ def parse_issues(payload)
     message = issue_title
   end
 
-  title = "#{issuee} #{action} issue #{repo}##{issue_num}"
+  title = "#{repo}: #{issuee} #{action} issue #{issue_num}"
   url = issue['html_url']
   url_title = 'View issue on GitHub'
   {url: url, title: title, message: message, url_title: url_title}
@@ -92,7 +92,7 @@ end
 def parse_push(p)
   pushee = p['pusher']['name']
   branch = p['ref'].split('/').last
-  repo = p['repository']['full_name']
+  repo = p['repository']['name']
 
   message = p['commits'].map do |c|
     parts = c['message'].partition "\n\n"
@@ -104,7 +104,7 @@ def parse_push(p)
 
   url = p['compare']
   url_title = "Compare on GitHub"
-  title = "#{pushee} pushed to #{branch} at #{repo}"
+  title = "#{repo}: #{pushee} pushed to #{branch}"
   {url: url, title: title, message: message, url_title: url_title}
 end
 
