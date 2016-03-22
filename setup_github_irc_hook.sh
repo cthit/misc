@@ -1,4 +1,7 @@
+# PASS: Your personal access token. Needs to have scope admin:repo_hook to work
+# You can generate access tokens at https://github.com/settings/tokens
 PASS='pass'
+# USER: GitHub user name
 USER='username'
 ORG=cthit
 repos=(hubbIT hubbIT-sniffer achieveIT bookIT playIT-grails misc auth wordpress dokument playIT-python chalmersit-wp-plugins Homestead chalmersit-rails chalmersit-account-rails CodeIT VoteIT HueIT-Rails nollkIT EatIT DreamTeamBots Hubben tv mat lounge)
